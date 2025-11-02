@@ -45,7 +45,25 @@ const PreferencesSchema = new mongoose.Schema(
     genres: { type: [String], default: [] },
     volume: { type: Number, min: 0, max: 1, default: 0.7 },
     autoPlay: { type: Boolean, default: false },
-    language: { type: String, default: "en" },
+    language: { type: String, default: "all" },
+    autoVolume: { type: Boolean, default: true },
+  },
+  { _id: false }
+);
+
+const ListeningHistorySchema = new mongoose.Schema(
+  {
+    trackId: { type: String, required: true },
+    title: { type: String, required: true },
+    artist: { type: String, required: true },
+    emotion: {
+      type: String,
+      enum: ["happy", "sad", "angry", "surprised", "neutral"],
+      required: true,
+    },
+    playedAt: { type: Date, default: Date.now },
+    duration: { type: Number, default: 0 }, // in seconds
+    completed: { type: Boolean, default: false }, // true if played fully, false if skipped
   },
   { _id: false }
 );
@@ -65,6 +83,9 @@ const UserSchema = new mongoose.Schema(
     preferences: { type: PreferencesSchema, default: () => ({}) },
     emotionHistory: { type: [EmotionEntrySchema], default: [] },
     playlists: { type: [PlaylistSchema], default: [] },
+    likedTracks: { type: [String], default: [] }, // Array of trackIds
+    dislikedTracks: { type: [String], default: [] }, // Array of trackIds
+    listeningHistory: { type: [ListeningHistorySchema], default: [] },
   },
   { timestamps: true }
 );

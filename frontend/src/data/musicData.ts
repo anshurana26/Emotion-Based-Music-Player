@@ -11,6 +11,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/happy/Dil Dhadakne Do.mp3",
       cover:
         "https://c.saavncdn.com/240/Dil-Dhadakne-Do-Hindi-2015-500x500.jpg",
+      language: "hi",
     },
     {
       id: "happy-2",
@@ -20,6 +21,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/happy/Mera Mann Kehne Laga.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00001e02785c415336347fca03a1d638",
+      language: "hi",
     },
     {
       id: "happy-3",
@@ -29,6 +31,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/happy/Kabhi Kabhi Aditi.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00001e02abf91851997179d195afab5f",
+      language: "hi",
     },
   ],
   sad: [
@@ -40,6 +43,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/sad/Finding Her.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d0000485183141000ee8ce3b893a0b425",
+      language: "en",
     },
     {
       id: "sad-2",
@@ -49,6 +53,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/sad/Maand.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00001e02050a86ad4ac35aedb9b41d89",
+      language: "hi",
     },
     {
       id: "sad-3",
@@ -58,6 +63,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/sad/Jhol.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d000048516f276fe6c6093449347cc11d",
+      language: "hi",
     },
   ],
   angry: [
@@ -69,6 +75,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/angry/Jee Karda.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d000048514c74beed966d2f38aa298c57",
+      language: "hi",
     },
     {
       id: "angry-2",
@@ -78,6 +85,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/angry/Brothers Anthem.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00004851b62efc8fa0cbf9bdd3331e49",
+      language: "en",
     },
     {
       id: "angry-3",
@@ -87,6 +95,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/angry/Saadda Haq.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d0000485154e544672baa16145d67612b",
+      language: "pa",
     },
   ],
   surprised: [
@@ -98,6 +107,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/surprised/Blinding Lights.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d000048518863bc11d2aa12b54f5aeb36",
+      language: "en",
     },
     {
       id: "surprised-2",
@@ -107,6 +117,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/surprised/One Dance.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d0000485172d0af2341359a90710c1fdc",
+      language: "en",
     },
     {
       id: "surprised-3",
@@ -116,6 +127,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/surprised/Counting Stars.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d000048519e2f95ae77cf436017ada9cb",
+      language: "en",
     },
   ],
   neutral: [
@@ -127,6 +139,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/neutral/Winning Speech - Karan Aujla.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d0000b273bb0a8916e30754d2e08f28bb",
+      language: "pa",
     },
     {
       id: "neutral-2",
@@ -136,6 +149,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/neutral/ANTIDOTE - Karan Aujla.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00004851f9d66911f25fcb4b3b7d5cd3",
+      language: "pa",
     },
     {
       id: "neutral-3",
@@ -145,6 +159,7 @@ const defaultTracks: Record<Emotion, Track[]> = {
       path: "/music/neutral/Wavy - Karan Aujla.mp3",
       cover:
         "https://i.scdn.co/image/ab67616d00004851e34f05599c4a42e1cbb1c251",
+      language: "pa",
     },
   ],
 };

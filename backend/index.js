@@ -20,6 +20,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/auth", require("./src/routes/auth"));
+app.use("/api/user", require("./src/routes/user"));
 
 // Start server (connect DB if URI present)
 const port = process.env.PORT || 5000;

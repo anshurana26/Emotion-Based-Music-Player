@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import * as faceapi from "face-api.js";
 import { EmotionDetectionResult, Emotion } from "../types";
 import { Music, AlertCircle } from "lucide-react";
+import ManualEmotionSelector from "./ManualEmotionSelector";
 
 interface EmotionDetectorProps {
   onEmotionDetected: (result: EmotionDetectionResult) => void;
@@ -203,29 +204,51 @@ const EmotionDetector: React.FC<EmotionDetectorProps> = ({
 
   if (permissionError) {
     return (
-      <div className="flex flex-col items-center justify-center h-48 md:h-64 lg:h-80 bg-gray-800 rounded-xl p-4">
-        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-        <p className="text-white text-center">{permissionError}</p>
+      <div className="bg-gray-800 rounded-xl">
+        <div className="flex flex-col items-center justify-center p-4 border-b border-white/10">
+          <AlertCircle className="w-8 h-8 text-yellow-500 mb-2" />
+          <p className="text-white text-center text-sm">{permissionError}</p>
+          <p className="text-gray-400 text-center text-xs mt-1">Use manual mode below</p>
+        </div>
+        <ManualEmotionSelector
+          onEmotionSelect={(emotion) =>
+            onEmotionDetected({ emotion, confidence: 0.8 })
+          }
+          currentEmotion={lastEmotion}
+        />
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-48 md:h-64 lg:h-80">
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        className="w-full h-full rounded-xl object-cover"
-      />
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full rounded-xl"
-      />
+    <div className="relative w-full">
+      <div className="relative w-full h-48 md:h-64 lg:h-80">
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full h-full rounded-xl object-cover"
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-full rounded-xl"
+        />
+        {!isActive && (
+          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center rounded-xl">
+            <p className="text-white text-lg">Webcam paused</p>
+          </div>
+        )}
+      </div>
       {!isActive && (
-        <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center rounded-xl">
-          <p className="text-white text-lg">Webcam paused</p>
+        <div className="mt-2 bg-gray-800/50 rounded-xl">
+          <ManualEmotionSelector
+            onEmotionSelect={(emotion) => {
+              // Always allow manual emotion selection
+              onEmotionDetected({ emotion, confidence: 0.8 });
+            }}
+            currentEmotion={lastEmotion}
+          />
         </div>
       )}
     </div>

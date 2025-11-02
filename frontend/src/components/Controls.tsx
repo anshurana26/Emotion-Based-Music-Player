@@ -1,15 +1,15 @@
-import React from 'react';
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
+import React from "react";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
   VolumeX,
   Repeat,
-  Shuffle
-} from 'lucide-react';
-import { PlaybackState } from '../types';
+  Shuffle,
+} from "lucide-react";
+import { PlaybackState } from "../types";
 
 interface ControlsProps {
   playbackState: PlaybackState;
@@ -32,24 +32,26 @@ const Controls: React.FC<ControlsProps> = ({
   onVolumeChange,
   onToggleMute,
   onToggleLoop,
-  onToggleShuffle
+  onToggleShuffle,
 }) => {
-  const { 
-    isPlaying, 
-    currentTime, 
-    duration, 
-    volume, 
+  const {
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
     isMuted,
     isLooping,
-    isShuffle
+    isShuffle,
   } = playbackState;
 
   // Format time for display
   const formatTime = (time: number) => {
-    if (isNaN(time)) return '00:00';
+    if (isNaN(time)) return "00:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   return (
@@ -57,9 +59,9 @@ const Controls: React.FC<ControlsProps> = ({
       {/* Progress bar */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xs text-gray-300">{formatTime(currentTime)}</span>
-        <div className="flex-grow relative h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div 
-            className="absolute h-full bg-white bg-opacity-80 transition-all duration-100 ease-in-out"
+        <div className="flex-grow relative h-2 bg-white/10 rounded-full overflow-hidden">
+          <div
+            className="absolute h-full bg-brand-500/80 transition-all duration-100 ease-in-out"
             style={{ width: `${(currentTime / duration) * 100}%` }}
           />
           <input
@@ -76,9 +78,13 @@ const Controls: React.FC<ControlsProps> = ({
 
       {/* Main controls */}
       <div className="flex items-center justify-between mb-3">
-        <button 
+        <button
           onClick={onToggleShuffle}
-          className={`p-2 rounded-full ${isShuffle ? 'text-white bg-white bg-opacity-20' : 'text-gray-400 hover:text-white'} transition`}
+          className={`p-2 rounded-full ${
+            isShuffle
+              ? "text-white bg-white bg-opacity-20"
+              : "text-gray-400 hover:text-white"
+          } transition`}
         >
           <Shuffle size={18} />
         </button>
@@ -106,9 +112,13 @@ const Controls: React.FC<ControlsProps> = ({
           </button>
         </div>
 
-        <button 
+        <button
           onClick={onToggleLoop}
-          className={`p-2 rounded-full ${isLooping ? 'text-white bg-white bg-opacity-20' : 'text-gray-400 hover:text-white'} transition`}
+          className={`p-2 rounded-full ${
+            isLooping
+              ? "text-white bg-brand-500/20"
+              : "text-gray-400 hover:text-white"
+          } transition`}
         >
           <Repeat size={18} />
         </button>
@@ -122,9 +132,9 @@ const Controls: React.FC<ControlsProps> = ({
         >
           {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
-        <div className="w-full max-w-[100px] h-1 bg-gray-700 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-white bg-opacity-80"
+        <div className="w-full max-w-[120px] h-1 bg-white/10 rounded-full overflow-hidden relative">
+          <div
+            className="h-full bg-brand-500/80"
             style={{ width: `${isMuted ? 0 : volume * 100}%` }}
           />
           <input
@@ -134,7 +144,7 @@ const Controls: React.FC<ControlsProps> = ({
             step="0.01"
             value={volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="absolute w-[100px] h-5 opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-5 opacity-0 cursor-pointer"
           />
         </div>
       </div>

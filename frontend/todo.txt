@@ -1,50 +1,8 @@
-1. Login and User Profile
-
-Basic authentication
-User specific playlists
-Emotions and music preference learned per user
-Benefit: Project ban jata hai real app jaisa.
-
----
-
 2. Like / Dislike Feedback System
 
 Agar user song skip kare ya dislike ho to remove future suggestions
 Like kare to similar songs suggest karo
 Benefit: Lagta hai system user ko samajh raha hai.
-
----
-
-3. Listening History
-
-Track:
-Last played songs
-Mood when song was played
-Benefit: Report me bada point. UI me simple list.
-
----
-
-4. Recently Detected Emotions Log
-
-Daily, weekly mood chart bana sakte ho
-Pie chart ya line graph
-Simple Matplotlib ya WebView graph
-Benefit: Mental wellness angle bhi cover ho jata.
-
----
-
-7. Auto Volume Adjustment
-
-Agar sadness detect ho to volume halka Agar excitement detect ho to thoda high
-Chhota feature, professional touch.
-
----
-
-12. Emotion-based Shuffle Logic
-
-Random nahi.
-Playlist change is based on mood shift, not just change next song.
-Small but very intelligent touch.
 
 ---
 
@@ -59,25 +17,8 @@ Member 3 ka module.
 
 ---
 
-15. Offline Emotion Mode
-
-Agar camera off ho jaye ya light low ho:
-User manually mood select kar sakta
-System fallback mode me chale
-Professional UX feeling.
-
----
-
 17. Multi-Language Song Support
 User language preference: Hindi / English / Punjabi etc.
 Usme hi song playlist dikhe.
-
----
-
-18. Sleep Mode for Stress Emotions
-Agar tired detect ho:
-soft music
-auto stop after 20 mins
-Health + daily use case.
 
 ---

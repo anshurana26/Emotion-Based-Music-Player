@@ -7,6 +7,7 @@ export interface Track {
   emotion: Emotion;
   path: string;
   cover: string;
+  language?: string; // Language code: "en", "hi", "pa", etc.
 }
 
 export interface EmotionDetectionResult {
@@ -22,4 +23,41 @@ export interface PlaybackState {
   isMuted: boolean;
   isLooping: boolean;
   isShuffle: boolean;
+}
+
+export interface ListeningHistoryEntry {
+  trackId: string;
+  title: string;
+  artist: string;
+  emotion: Emotion;
+  playedAt: string;
+  duration: number;
+  completed: boolean;
+}
+
+export interface UserPreferences {
+  genres: string[];
+  volume: number;
+  autoPlay: boolean;
+  language: string;
+  autoVolume?: boolean;
+}
+
+export interface EmotionStats {
+  emotionCounts: {
+    happy: number;
+    sad: number;
+    angry: number;
+    surprised: number;
+    neutral: number;
+  };
+  timelineData: Array<{
+    date: string;
+    happy: number;
+    sad: number;
+    angry: number;
+    surprised: number;
+    neutral: number;
+  }>;
+  total: number;
 }

@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #0b0f16;
+  --bg-soft: #0f131b;
+  --card: #151923;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-[var(--bg)] text-[var(--text)] font-sans antialiased;
+  background-image: radial-gradient(
+      1200px 800px at -10% -10%,
+      rgba(30, 150, 249, 0.15),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 600px at 110% 10%,
+      rgba(79, 70, 229, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 500px at 50% 120%,
+      rgba(16, 185, 129, 0.1),
+      transparent 60%
+    );
+}
+
+/* Smooth transitions for themeable elements */
+.theme-transition {
+  @apply transition-colors duration-300 ease-out;
+}
+
+/* Card and panel helpers */
+.panel {
+  /* Use literal color to avoid arbitrary values inside @apply */
+  background-color: rgba(21, 25, 35, 0.7);
+  @apply backdrop-blur-lg border border-white/5 rounded-2xl shadow-2xl;
+}
+
+.muted {
+  color: var(--muted);
+}
