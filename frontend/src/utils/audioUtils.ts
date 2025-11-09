@@ -96,18 +96,30 @@ export const formatTime = (timeInSeconds: number): string => {
  */
 export const getPreviousTrack = (
   currentTrack: Track,
-  dislikedTracks: string[] = []
+  dislikedTracks: string[] = [],
+  languagePreference?: string
 ): Track => {
   let tracksInCategory = musicData[currentTrack.emotion];
   
+  // Filter by language preference if specified (excluding "all")
+  if (languagePreference && languagePreference !== "all") {
+    const languageFiltered = tracksInCategory.filter(
+      track => track.language === languagePreference
+    );
+    // If no tracks match language, use all tracks
+    if (languageFiltered.length > 0) {
+      tracksInCategory = languageFiltered;
+    }
+  }
+  
   // Filter out disliked tracks if any
   if (dislikedTracks.length > 0) {
-    tracksInCategory = tracksInCategory.filter(
+    const withoutDisliked = tracksInCategory.filter(
       track => !dislikedTracks.includes(track.id)
     );
     // If all tracks are disliked, use all tracks as fallback
-    if (tracksInCategory.length === 0) {
-      tracksInCategory = musicData[currentTrack.emotion];
+    if (withoutDisliked.length > 0) {
+      tracksInCategory = withoutDisliked;
     }
   }
   
@@ -122,18 +134,30 @@ export const getPreviousTrack = (
  */
 export const getNextTrack = (
   currentTrack: Track,
-  dislikedTracks: string[] = []
+  dislikedTracks: string[] = [],
+  languagePreference?: string
 ): Track => {
   let tracksInCategory = musicData[currentTrack.emotion];
   
+  // Filter by language preference if specified (excluding "all")
+  if (languagePreference && languagePreference !== "all") {
+    const languageFiltered = tracksInCategory.filter(
+      track => track.language === languagePreference
+    );
+    // If no tracks match language, use all tracks
+    if (languageFiltered.length > 0) {
+      tracksInCategory = languageFiltered;
+    }
+  }
+  
   // Filter out disliked tracks if any
   if (dislikedTracks.length > 0) {
-    tracksInCategory = tracksInCategory.filter(
+    const withoutDisliked = tracksInCategory.filter(
       track => !dislikedTracks.includes(track.id)
     );
     // If all tracks are disliked, use all tracks as fallback
-    if (tracksInCategory.length === 0) {
-      tracksInCategory = musicData[currentTrack.emotion];
+    if (withoutDisliked.length > 0) {
+      tracksInCategory = withoutDisliked;
     }
   }
   

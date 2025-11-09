@@ -43,40 +43,55 @@ function App() {
       {/* Main */}
       <main className="flex-1">
         <div className="mx-auto w-full max-w-6xl px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Intro / Auth panel */}
-            <section className="lg:col-span-5 space-y-4">
-              <div className="panel p-6 theme-transition">
-                <h2 className="text-2xl font-bold mb-2">Emotion-Based Music Player</h2>
-                <p className="text-gray-400">
-                  Let your emotions guide your music experience. We detect how
-                  you're feeling and suggest the perfect track.
-                </p>
-              </div>
+          {isLoading ? (
+            <div className="panel p-6 text-gray-300 text-center">Loading...</div>
+          ) : user ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Intro / Auth panel */}
+              <section className="lg:col-span-5 space-y-4">
+                <div className="panel p-6 theme-transition">
+                  <h2 className="text-2xl font-bold mb-2">Emotion-Based Music Player</h2>
+                  <p className="text-gray-400">
+                    Let your emotions guide your music experience. We detect how
+                    you're feeling and suggest the perfect track.
+                  </p>
+                </div>
+                <UserPreferences />
+                <ListeningHistory />
+                <EmotionCharts />
+              </section>
 
-              {isLoading ? (
-                <div className="panel p-6 text-gray-300 text-center">Loading...</div>
-              ) : user ? (
-                <>
-                  <UserPreferences />
-                  <ListeningHistory />
-                  <EmotionCharts />
-                </>
-              ) : (
-                <div className="panel p-4">
-                  <div className="mb-3 bg-white/5 p-1 rounded-lg inline-flex">
+              {/* Player area */}
+              <section className="lg:col-span-7">
+                <div className="panel p-0">
+                  <MusicPlayer />
+                </div>
+              </section>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+              <div className="w-full max-w-md space-y-6">
+                <div className="panel p-6 text-center">
+                  <h2 className="text-3xl font-bold mb-2">Emotion-Based Music Player</h2>
+                  <p className="text-gray-400">
+                    Let your emotions guide your music experience. We detect how
+                    you're feeling and suggest the perfect track.
+                  </p>
+                </div>
+                <div className="panel p-6">
+                  <div className="mb-4 bg-white/5 p-1 rounded-lg inline-flex w-full justify-center">
                     <button
                       onClick={() => setMode("login")}
-                      className={`px-4 py-2 rounded-md ${
-                        mode === "login" ? "bg-brand-500 text-white" : "text-gray-300"
+                      className={`flex-1 px-4 py-2 rounded-md transition-colors ${
+                        mode === "login" ? "bg-brand-500 text-white" : "text-gray-300 hover:text-white"
                       }`}
                     >
                       Login
                     </button>
                     <button
                       onClick={() => setMode("signup")}
-                      className={`px-4 py-2 rounded-md ${
-                        mode === "signup" ? "bg-brand-500 text-white" : "text-gray-300"
+                      className={`flex-1 px-4 py-2 rounded-md transition-colors ${
+                        mode === "signup" ? "bg-brand-500 text-white" : "text-gray-300 hover:text-white"
                       }`}
                     >
                       Signup
@@ -88,18 +103,9 @@ function App() {
                     <Signup onSuccess={() => setMode("login")} />
                   )}
                 </div>
-              )}
-            </section>
-
-            {/* Player area */}
-            {user && (
-              <section className="lg:col-span-7">
-                <div className="panel p-0">
-                  <MusicPlayer />
-                </div>
-              </section>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

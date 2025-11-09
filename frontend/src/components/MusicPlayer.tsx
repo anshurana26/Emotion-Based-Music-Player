@@ -294,7 +294,7 @@ const MusicPlayer: React.FC = () => {
       trackStartTimeRef.current = 0;
     }
 
-    const prevTrack = getPreviousTrack(currentTrack, dislikedTracks);
+    const prevTrack = getPreviousTrack(currentTrack, dislikedTracks, languagePreference);
     setCurrentTrack(prevTrack);
 
     // Maintain current playback state
@@ -339,7 +339,7 @@ const MusicPlayer: React.FC = () => {
           likedTracks,
           languagePreference
         )
-      : getNextTrack(currentTrack, dislikedTracks);
+      : getNextTrack(currentTrack, dislikedTracks, languagePreference);
 
     // Ensure next track is soft in sleep mode
     if (isSleepMode && !["sad", "neutral"].includes(nextTrack.emotion)) {

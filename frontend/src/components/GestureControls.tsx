@@ -23,12 +23,21 @@ const GestureControls: React.FC<GestureControlsProps> = ({
   const faceMeshRef = useRef<FaceMesh | null>(null);
   const cameraRef = useRef<Camera | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [gestureConsumed, setGestureConsumed] = useState(false);
+  const enableTimeRef = useRef(0);
+  const smileFramesRef = useRef(0);
+  const blinkFramesRef = useRef(0);
   const [lastBlinkTime, setLastBlinkTime] = useState(0);
   const [lastSmileTime, setLastSmileTime] = useState(0);
-  const [lastFrownTime, setLastFrownTime] = useState(0);
+  const mouthOpenFramesRef = useRef(0);
+  const [lastMouthOpenTime, setLastMouthOpenTime] = useState(0);
   const blinkCooldown = 1000; // 1 second between blinks
   const smileCooldown = 2000; // 2 seconds between smile actions
-  const frownCooldown = 2000; // 2 seconds between frown actions
+  const warmupMs = 600; // ignore detections briefly after enabling
+  const smileHoldThreshold = 4; // require stable frames to reduce false positives
+  const mouthOpenCooldown = 2000; // 2 seconds between mouth-open pause actions
+  const mouthOpenHoldThreshold = 4;
+  const blinkHoldThreshold = 2;
 
   useEffect(() => {
     if (!isEnabled || isInitialized) return;
@@ -52,7 +61,12 @@ const GestureControls: React.FC<GestureControlsProps> = ({
           const ctx = canvasRef.current.getContext("2d");
           if (ctx) {
             ctx.save();
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            ctx.clearRect(
+              0,
+              0,
+              canvasRef.current.width,
+              canvasRef.current.height
+            );
             ctx.drawImage(
               results.image,
               0,
@@ -63,7 +77,10 @@ const GestureControls: React.FC<GestureControlsProps> = ({
             ctx.restore();
 
             // Detect gestures
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+            if (
+              results.multiFaceLandmarks &&
+              results.multiFaceLandmarks.length > 0
+            ) {
               const landmarks = results.multiFaceLandmarks[0];
               detectGestures(landmarks);
             }
@@ -99,6 +116,26 @@ const GestureControls: React.FC<GestureControlsProps> = ({
     };
   }, [isEnabled, isInitialized]);
 
+  // Reset/cleanup when toggled off, and arm on enable
+  useEffect(() => {
+    if (!isEnabled) {
+      if (cameraRef.current) {
+        cameraRef.current.stop();
+      }
+      setIsInitialized(false);
+      setGestureConsumed(false);
+      smileFramesRef.current = 0;
+      mouthOpenFramesRef.current = 0;
+      blinkFramesRef.current = 0;
+    } else {
+      setGestureConsumed(false);
+      smileFramesRef.current = 0;
+      mouthOpenFramesRef.current = 0;
+      blinkFramesRef.current = 0;
+      enableTimeRef.current = Date.now();
+    }
+  }, [isEnabled]);
+
   const detectGestures = (landmarks: any[]) => {
     if (landmarks.length < 468) return; // Face mesh has 468 landmarks
 
@@ -112,15 +149,13 @@ const GestureControls: React.FC<GestureControlsProps> = ({
     const mouthHeight = Math.abs(upperLipY - lowerLipY);
 
     // Smile detection: wide mouth with corners up
-    const smileRatio = mouthWidth / mouthHeight;
-    const isSmiling = smileRatio > 2.5 && upperLipY < lowerLipY;
+    const smileRatio = mouthWidth / (mouthHeight + 1e-6);
+    const isSmiling = smileRatio > 2.8 && upperLipY < lowerLipY - 0.0015;
 
-    // Frown detection: corners down
-    const leftMouthY = landmarks[61].y;
-    const rightMouthY = landmarks[291].y;
-    const centerMouthY = (upperLipY + lowerLipY) / 2;
-    const isFrowning =
-      leftMouthY > centerMouthY + 0.02 && rightMouthY > centerMouthY + 0.02;
+    // Mouth-open detection (jaw drop / open mouth) — more robust than subtle corner movements
+    // Use the vertical distance between upper and lower lip centers (already computed as mouthHeight above)
+    // Tunable threshold: start around 0.045 and adjust per camera/setup
+    const isMouthOpen = mouthHeight > 0.045;
 
     // Blink detection: eye landmarks (left eye: 33-46, right eye: 263-276)
     const leftEyeTop = landmarks[159].y; // Upper eyelid
@@ -130,26 +165,61 @@ const GestureControls: React.FC<GestureControlsProps> = ({
 
     const leftEyeOpen = Math.abs(leftEyeTop - leftEyeBottom);
     const rightEyeOpen = Math.abs(rightEyeTop - rightEyeBottom);
-    const isBlinking = leftEyeOpen < 0.015 && rightEyeOpen < 0.015;
+    const isBlinking = leftEyeOpen < 0.012 && rightEyeOpen < 0.012;
 
     const now = Date.now();
 
-    // Handle smile (play)
-    if (isSmiling && now - lastSmileTime > smileCooldown) {
-      setLastSmileTime(now);
-      onPlay();
+    // Do not trigger during warm-up and after one gesture is consumed
+    if (gestureConsumed || now - enableTimeRef.current < warmupMs) {
+      return;
     }
 
-    // Handle frown (pause)
-    if (isFrowning && now - lastFrownTime > frownCooldown) {
-      setLastFrownTime(now);
-      onPause();
+    // Update hold counters using refs (immediate availability for checks)
+    smileFramesRef.current = isSmiling
+      ? Math.min(smileFramesRef.current + 1, 10)
+      : 0;
+    mouthOpenFramesRef.current = isMouthOpen
+      ? Math.min(mouthOpenFramesRef.current + 1, 10)
+      : 0;
+    blinkFramesRef.current = isBlinking
+      ? Math.min(blinkFramesRef.current + 1, 10)
+      : 0;
+
+    const triggerAndDisable = (action: () => void, after: () => void) => {
+      action();
+      after();
+      setGestureConsumed(true);
+      onToggle(false);
+    };
+
+    // Handle smile (play)
+    if (
+      isSmiling &&
+      smileFramesRef.current >= smileHoldThreshold &&
+      now - lastSmileTime > smileCooldown
+    ) {
+      triggerAndDisable(onPlay, () => setLastSmileTime(now));
+      return;
+    }
+
+    // Handle mouth-open (pause)
+    if (
+      isMouthOpen &&
+      mouthOpenFramesRef.current >= mouthOpenHoldThreshold &&
+      now - lastMouthOpenTime > mouthOpenCooldown
+    ) {
+      triggerAndDisable(onPause, () => setLastMouthOpenTime(now));
+      return;
     }
 
     // Handle blink (next track)
-    if (isBlinking && now - lastBlinkTime > blinkCooldown) {
-      setLastBlinkTime(now);
-      onNext();
+    if (
+      isBlinking &&
+      blinkFramesRef.current >= blinkHoldThreshold &&
+      now - lastBlinkTime > blinkCooldown
+    ) {
+      triggerAndDisable(onNext, () => setLastBlinkTime(now));
+      return;
     }
   };
 
@@ -180,7 +250,7 @@ const GestureControls: React.FC<GestureControlsProps> = ({
         <div>
           <h3 className="font-semibold mb-1">Gesture Controls Active</h3>
           <p className="text-sm text-gray-400">
-            Smile = Play • Blink = Next • Frown = Pause
+            Smile = Play • Blink = Next • Open Mouth = Pause
           </p>
         </div>
         <button
@@ -191,7 +261,7 @@ const GestureControls: React.FC<GestureControlsProps> = ({
         </button>
       </div>
 
-      <div className="relative w-full h-48 bg-gray-800 rounded-lg overflow-hidden">
+      <div className="relative w-full bg-gray-800 rounded-lg overflow-hidden aspect-[4/3]">
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
@@ -218,7 +288,7 @@ const GestureControls: React.FC<GestureControlsProps> = ({
         </div>
         <div className="flex items-center gap-1">
           <Frown className="w-4 h-4" />
-          <span>Frown to Pause</span>
+          <span>Open Mouth to Pause</span>
         </div>
       </div>
     </div>
@@ -226,4 +296,3 @@ const GestureControls: React.FC<GestureControlsProps> = ({
 };
 
 export default GestureControls;
-

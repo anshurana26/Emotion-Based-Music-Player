@@ -1,20 +1,3 @@
-2. Like / Dislike Feedback System
-
-Agar user song skip kare ya dislike ho to remove future suggestions
-Like kare to similar songs suggest karo
-Benefit: Lagta hai system user ko samajh raha hai.
-
----
-
-13. Music Player Controls with Gesture Recognition
-
-Smile = Play
-Blink = Next
-Frown = Pause
-Super demo wow effect.
-MediaPipe gestures se ho jayega.
-Member 3 ka module.
-
 ---
 
 17. Multi-Language Song Support
